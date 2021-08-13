@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./starwarsearch.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+    <div class="wrapper">
+        <img src="https://i.ibb.co/p1sc0t0/star-wars-logo.jpg" alt="star-wars-logo" height=150 width=200>
+        <div class="search-inputtext">
+            <input type="text" placeholder="Type to Search.." oninput='throttleFunction()' id='query'>
+            <div class="result-details-box">
+                <div id='searchresult'></div>
+            </div>
+            <div class="icon"><i class="material-icons">search</i>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    let searchresult_div = document.getElementById('searchresult');
+    searchresult_div.style.height = 'auto';
+    var setTimerId;
+    async function searchchar() {
+        let query = document.getElementById('query').value;
+        if (query.length <1) {
+
+            searchresult_div.innerHTML = '';
+            return false;
+
+        }
+
+        // if(query.length<2){
+        //     return false; //on accepting the query leng greater than equal to 2;
+        // }
+        let res = await fetch(`https://swapi.dev/api/people/?search=${query}`);
+
+        let data = await res.json();
+
+        return data.results
+    }
+    function throttleFunction() {
+        if (setTimerId) {
+            return false;
+        }
+        setTimerId = setTimeout(() => {
+
+            main();
+            setTimerId = undefined;
+        }, 100);
+        //console.log('setTimerId:', setTimerId);
+
+    };
+    function appendchars(ch) {
+
+        searchresult_div.innerHTML = '';
+        console.log('ch:', ch);
+        ch.forEach(({ name, gender, birth_year }) => {
+            let div_name = document.createElement('div')
+            div_name.setAttribute('class', 'name')
+            div_name.innerHTML = name;
+
+            let div_gender = document.createElement('div')
+            div_gender.innerHTML = gender;
+            div_gender.setAttribute('class', 'gender')
+
+            let div_birth_year = document.createElement('div')
+            div_birth_year.innerHTML = birth_year
+            div_birth_year.setAttribute('class', 'birth_year')
+            let final_div = document.createElement('div');
+            let hover_div = document.createElement('div');
+            hover_div.setAttribute('class', 'div_hover')
+            final_div.append(div_name, div_gender)
+
+            final_div.setAttribute('class', 'final_divv')
+            hover_div.append(final_div, div_birth_year)
+            searchresult_div.append(hover_div)
+        });
+
+    }
+
+    async function main() {
+        let movies = await searchchar();
+        appendchars(movies);
+    };
+
+
+
+
+
+
+
+
+
+
+
+</script>
